@@ -81,6 +81,7 @@ export function MintSection() {
 
   const [stage, setStage] = useState<Stage>('idle')
   const [imageDataUri, setImageDataUri] = useState<string | null>(null)
+  const [metadataUrl, setMetadataUrl] = useState<string | null>(null)
   const [traits, setTraits] = useState<NFTTraits | null>(null)
   const [generateError, setGenerateError] = useState<string | null>(null)
 
@@ -133,12 +134,9 @@ export function MintSection() {
       const res = await fetch('/api/generate', { method: 'POST' })
       const data = await res.json()
 
-      if (data.b64) {
-        setImageDataUri(`data:image/png;base64,${data.b64}`)
-        setTraits(data.traits ?? null)
-        setStage('preview')
-      } else if (data.url) {
-        setImageDataUri(data.url)
+      if (data.imageUrl) {
+        setImageDataUri(data.imageUrl)
+        setMetadataUrl(data.metadataUrl ?? null)
         setTraits(data.traits ?? null)
         setStage('preview')
       } else {
@@ -162,6 +160,7 @@ export function MintSection() {
   const handleCancel = () => {
     setStage('idle')
     setImageDataUri(null)
+    setMetadataUrl(null)
     setTraits(null)
     setGenerateError(null)
     resetTx()
@@ -243,6 +242,12 @@ export function MintSection() {
                 <p className="text-[#39ff14]/50 text-xs tracking-widest mt-2">WELCOME TO THE DEFIVERSO</p>
               </div>
               {traits && <TraitsPanel traits={traits} />}
+              {metadataUrl && (
+                <a href={metadataUrl} target="_blank" rel="noopener noreferrer"
+                  className="text-[#39ff14]/40 text-xs tracking-widest hover:text-[#39ff14] transition-colors duration-200">
+                  ↗ VER METADATA JSON
+                </a>
+              )}
             </div>
 
           /* GENERATING */
