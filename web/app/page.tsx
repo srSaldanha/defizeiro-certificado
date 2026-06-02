@@ -75,12 +75,12 @@ export default function Home() {
         <div className="mt-12 text-center">
           <p className="text-[#39ff14]/30 text-xs tracking-[0.4em] mb-1">CONTRACT</p>
           <a
-            href="https://gnosis-chiado.blockscout.com/address/0x719de80ae50662007538c123b5B2FEe006734E54"
+            href="https://gnosis-chiado.blockscout.com/address/0xb939553c9A882A95f1d720E85055D0A77Ec3529C"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#39ff14]/50 text-xs font-mono hover:text-[#39ff14] transition-colors duration-200"
           >
-            0x719de80ae50662007538c123b5B2FEe006734E54
+            0xb939553c9A882A95f1d720E85055D0A77Ec3529C
           </a>
         </div>
       </div>

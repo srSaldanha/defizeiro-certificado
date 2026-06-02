@@ -150,10 +150,12 @@ export function MintSection() {
   }
 
   const handleConfirmMint = () => {
+    if (!metadataUrl) return
     writeContract({
       address: CONTRACT_ADDRESS,
       abi: ABI,
       functionName: 'mint',
+      args: [metadataUrl],
     })
   }
 
