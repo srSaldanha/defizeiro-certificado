@@ -3,108 +3,86 @@ import OpenAI from 'openai'
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
+export type NFTTraits = {
+  Pele: string
+  Crânio: string
+  Olhos: string
+  Boca: string
+  Extras: string[]
+  'Item Cripto': string
+  Pose: string
+  Cenário: string
+  Estilo: string
+}
+
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
 function pickMany<T>(arr: T[], n: number): T[] {
-  const shuffled = [...arr].sort(() => Math.random() - 0.5)
-  return shuffled.slice(0, n)
+  return [...arr].sort(() => Math.random() - 0.5).slice(0, n)
 }
 
-function buildPrompt(): string {
-  const skinColor = pick([
-    'verde neon brilhante', 'roxo profundo com veias luminosas', 'azul metálico iridescente',
-    'laranja vibrante com manchas escuras', 'cinza prateado com reflexos dourados',
-    'rosa choque translúcido', 'amarelo tóxico com listras pretas',
-    'turquesa com padrões de escamas', 'vermelho coral com bioluminescência',
-    'branco gelo com veias violeta', 'marrom cósmico com manchas douradas',
-  ])
+function buildTraits(): NFTTraits {
+  return {
+    Pele: pick([
+      'Verde Neon', 'Roxo Profundo', 'Azul Metálico', 'Laranja Vibrante',
+      'Cinza Prateado', 'Rosa Choque', 'Amarelo Tóxico', 'Turquesa Escamado',
+      'Vermelho Coral Bioluminescente', 'Branco Gelo', 'Marrom Cósmico',
+    ]),
+    Crânio: pick([
+      'Alongado e Estreito', 'Enorme Redondo', 'Triangular Pontudo',
+      'Achatado com Corcova', 'Gota Invertida', 'Protuberâncias Ósseas',
+      'Quadrado Arredondado', 'Espiral com Cavidades', 'Formato Cogumelo', 'Duplo Dividido',
+    ]),
+    Olhos: pick([
+      'Três Olhos em Triângulo', 'Olho de Inseto Composto', 'Ciclope Gigante',
+      'Quatro Olhos em Fileiras', 'Emite Raios Neon', 'Totalmente Negros',
+      'Formato de X com Íris Giratória', 'Saltados Transparentes com Circuitos',
+      'Cobra Vertical Pulsante', 'Telas de Holograma',
+    ]),
+    Boca: pick([
+      'Dentes Tortos Coloridos', 'Formato W com Língua Bifurcada', 'Bico Metálico',
+      'Sorriso Neon de Orelha a Orelha', 'Circular com Dentes Giratórios',
+      'Maxilar Duplo Estilizado', 'Linha Fina Sem Boca', 'Rasgada com Luz Interior',
+      'Focinho com Narinas Abertas', 'Zíper Metálico Dourado',
+    ]),
+    Extras: pickMany([
+      'Antenas com Esferas Neon', 'Chifres de Cristal', 'Orelhas Pontiagudas com Circuito',
+      'Veias Bioluminescentes', 'Cicatrizes Geométricas', 'Tentáculos no Queixo',
+      'Crista de Espinhos', 'Olheiras Dramáticas', 'Marcas Tribais Alienígenas',
+      'Cabelo de Energia Elétrica',
+    ], 2),
+    'Item Cripto': pick([
+      'Moeda Digital Gigante Brilhante', 'Surfando em Gráfico de Alta Neon',
+      'Carteira Cripto Holográfica', 'Disco Voador com Blockchain',
+      'Correntes de Blocos Flutuantes', 'Chave Digital Dourada',
+      'Cubos de Dados Flutuantes', 'NFT Emoldurado ao Lado',
+      'Lançando Tokens pelo Ar', 'Conectado a Rede de Nós por Luz',
+      'Bolha de Holograma DeFi', 'Óculos de Realidade Aumentada Cripto',
+    ]),
+    Pose: pick([
+      'Herói com Braço Erguido', 'Meditação Cripto', 'Dançando com Energia Elétrica',
+      'Apontando para o Observador', 'Braços Cruzados Dominante',
+      'Pulando em Celebração', 'Curioso e Investigativo',
+      'Surfista Relaxado', 'Batalha Pronto', 'Yoga no Espaço',
+    ]),
+    Cenário: pick([
+      'Nebulosa Roxa com Candles Neon', 'Blocos de Blockchain Conectados',
+      'Planeta de Circuito Eletrônico', 'Galáxia com Hologramas DeFi',
+      'Vórtice Cósmico Verde', 'Matrix Brilhante com Tokens',
+      'Cidade Futurista Alienígena', 'Asteroides de Blockchain Dourado',
+      'Portal Dimensional', 'Aurora Boreal Cripto',
+    ]),
+    Estilo: pick([
+      'Anime Japonês', 'Cartoon Bold', 'Chibi Fofo',
+      'Cyberpunk Metálico', 'Pop Art', 'Graffiti Urbano', 'Flat Design Vibrante',
+    ]),
+  }
+}
 
-  const headShape = pick([
-    'crânio alongado e estreito', 'cabeça redonda e enorme como balão',
-    'cabeça triangular com topo pontudo', 'crânio achatado com corcova atrás',
-    'cabeça em formato de gota invertida', 'crânio com protuberâncias ósseas',
-    'cabeça quadrada com cantos arredondados', 'crânio em espiral com cavidades',
-    'cabeça em formato de cogumelo', 'crânio duplo com divisão central',
-  ])
-
-  const eyes = pick([
-    'três olhos enormes dispostos em triângulo', 'olhos de inseto compostos multifacetados',
-    'um único olho ciclope gigante e expressivo', 'quatro olhos pequenos em duas fileiras',
-    'olhos que emitem raios de luz neon', 'olhos totalmente pretos sem pupila',
-    'olhos em formato de X com íris giratória', 'olhos saltados e transparentes com circuitos internos',
-    'olhos de cobra verticais com luz pulsante', 'olhos que parecem telas de holograma',
-  ])
-
-  const mouth = pick([
-    'boca larga com dentes tortos coloridos', 'boca em formato de W com língua bifurcada',
-    'bico metálico como robô', 'sorriso de orelha a orelha com dentes de neon',
-    'boca circular cheia de dentes giratórios', 'maxilar duplo como xenomorfo estilizado',
-    'nenhuma boca visível, apenas uma linha fina', 'boca rasgada com luz saindo de dentro',
-    'focinho curto com narinas abertas', 'boca com zíper metálico dourado entreaberto',
-  ])
-
-  const extras = pickMany([
-    'antenas longas com esferas brilhantes na ponta',
-    'chifres pequenos de cristal translúcido',
-    'orelhas pontiagudas com piercings de circuito',
-    'veias bioluminescentes visíveis na pele',
-    'cicatrizes alienígenas em padrão geométrico',
-    'tentáculos pequenos saindo do queixo',
-    'crista de espinhos ao longo da cabeça',
-    'olheiras fundas com sombra escura dramática',
-    'marcas tribais alienígenas gravadas na pele',
-    'cabelo feito de fios de energia elétrica',
-  ], 2)
-
-  const cryptoItem = pick([
-    'segurando uma moeda digital gigante que brilha como sol',
-    'surfando em cima de um gráfico de alta neon',
-    'carregando uma carteira cripto holográfica',
-    'pilotando um disco voador decorado com símbolos de blockchain',
-    'com correntes de blocos flutuando ao redor do corpo',
-    'segurando uma chave digital dourada',
-    'cercado por cubos de dados flutuantes',
-    'com um NFT emoldurado flutuando ao lado',
-    'lançando tokens brilhantes pelo ar',
-    'conectado a uma rede de nós blockchain por fios de luz',
-    'dentro de uma bolha de holograma DeFi',
-    'usando óculos de realidade aumentada com gráficos cripto',
-  ])
-
-  const pose = pick([
-    'pose de herói com braço erguido', 'sentado em posição de meditação cripto',
-    'dançando com energia elétrica ao redor', 'apontando para o observador',
-    'cruzando os braços com expressão de superioridade', 'pulando em celebração',
-    'inclinado para frente curioso e investigativo', 'pose de surfista relaxado',
-    'em posição de batalha pronto para lutar', 'flutuando no espaço em posição de yoga',
-  ])
-
-  const background = pick([
-    'nebulosa roxa e azul com estrelas douradas e gráficos de candle neon',
-    'espaço negro profundo com blocos de blockchain conectados por fios de luz',
-    'planeta alienígena com superfície de circuito eletrônico e luas de moeda',
-    'galáxia espiral com moedas flutuantes e hologramas DeFi',
-    'vórtice cósmico verde e amarelo com dados digitais em cascata',
-    'espaço com grade de matrix brilhante e constelações de token',
-    'fundo de cidade futurista alienígena com arranha-céus de cristal',
-    'campo de asteroides feitos de cubos de blockchain dourados',
-    'portal dimensional com luz branca intensa e tokens ao redor',
-    'aurora boreal neon sobre superfície de planeta gelado com ícones cripto',
-  ])
-
-  const style = pick([
-    'estilo anime japonês com linhas grossas e cores saturadas',
-    'estilo cartoon americano bold com sombras fortes',
-    'estilo chibi fofo com proporções exageradas',
-    'estilo cyberpunk com detalhes metálicos e neon',
-    'estilo pop art com cores chapadas e contornos pretos',
-    'estilo graffiti urbano com texturas de spray',
-    'estilo flat design moderno com gradientes vibrantes',
-  ])
-
-  return `Arte NFT quadrada da coleção Defiverso Cripto. Personagem: alien ${skinColor}, com ${headShape}, ${eyes}, ${mouth}, ${extras.join(' e ')}. ${cryptoItem}. ${pose}. Fundo: ${background}. ${style}. Sem logotipos reais de marcas. Composição centralizada, avatar colecionável, iluminação neon, sombras dramáticas, ultra detalhado, 4K, alta qualidade.`
+function traitsToPrompt(t: NFTTraits): string {
+  return `Arte NFT quadrada da coleção Defiverso Cripto. Personagem: alien com pele ${t.Pele}, crânio ${t.Crânio}, ${t.Olhos}, boca ${t.Boca}, com ${t.Extras.join(' e ')}. ${t['Item Cripto']}. Pose: ${t.Pose}. Fundo: ${t.Cenário}. Estilo: ${t.Estilo}. Sem logotipos reais de marcas. Composição centralizada, avatar colecionável, iluminação neon, sombras dramáticas, ultra detalhado, 4K.`
 }
 
 export async function POST() {
@@ -112,7 +90,8 @@ export async function POST() {
     return NextResponse.json({ error: 'API key not configured' }, { status: 500 })
   }
 
-  const prompt = buildPrompt()
+  const traits = buildTraits()
+  const prompt = traitsToPrompt(traits)
 
   const response = await openai.images.generate({
     model: 'gpt-image-1',
@@ -127,11 +106,11 @@ export async function POST() {
   }
 
   if (imageData.b64_json) {
-    return NextResponse.json({ b64: imageData.b64_json })
+    return NextResponse.json({ b64: imageData.b64_json, traits })
   }
 
   if (imageData.url) {
-    return NextResponse.json({ url: imageData.url })
+    return NextResponse.json({ url: imageData.url, traits })
   }
 
   return NextResponse.json({ error: 'No image data in response' }, { status: 500 })

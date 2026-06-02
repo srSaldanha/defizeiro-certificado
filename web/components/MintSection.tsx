@@ -4,8 +4,44 @@ import { useEffect, useState } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { CONTRACT_ADDRESS, ABI } from '@/lib/contract'
+import type { NFTTraits } from '@/app/api/generate/route'
 
 type Stage = 'idle' | 'generating' | 'preview' | 'confirming' | 'minting' | 'success'
+
+const TRAIT_LABELS: Record<string, string> = {
+  Pele: '🎨 Pele',
+  Crânio: '💀 Crânio',
+  Olhos: '👁 Olhos',
+  Boca: '👄 Boca',
+  Extras: '✦ Extras',
+  'Item Cripto': '₿ Item Cripto',
+  Pose: '⚡ Pose',
+  Cenário: '🌌 Cenário',
+  Estilo: '🖌 Estilo',
+}
+
+function TraitsPanel({ traits }: { traits: NFTTraits }) {
+  const entries = Object.entries(traits) as [keyof NFTTraits, NFTTraits[keyof NFTTraits]][]
+  return (
+    <div className="w-full border border-[#39ff14]/15 bg-[#000a00]">
+      <div className="px-4 py-2 border-b border-[#39ff14]/15">
+        <p className="text-[#39ff14]/50 text-xs tracking-[0.4em]">ATRIBUTOS</p>
+      </div>
+      <div className="grid grid-cols-2 gap-px bg-[#39ff14]/10">
+        {entries.map(([key, value]) => (
+          <div key={key} className="bg-[#000a00] px-3 py-2">
+            <p className="text-[#39ff14]/40 text-xs tracking-wider mb-1">
+              {TRAIT_LABELS[key] ?? key}
+            </p>
+            <p className="text-[#39ff14] text-xs font-bold leading-tight">
+              {Array.isArray(value) ? value.join(', ') : value}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function GlowButton({
   onClick,
@@ -45,6 +81,7 @@ export function MintSection() {
 
   const [stage, setStage] = useState<Stage>('idle')
   const [imageDataUri, setImageDataUri] = useState<string | null>(null)
+  const [traits, setTraits] = useState<NFTTraits | null>(null)
   const [generateError, setGenerateError] = useState<string | null>(null)
 
   const { data: totalSupply, refetch: refetchSupply } = useReadContract({
@@ -98,9 +135,11 @@ export function MintSection() {
 
       if (data.b64) {
         setImageDataUri(`data:image/png;base64,${data.b64}`)
+        setTraits(data.traits ?? null)
         setStage('preview')
       } else if (data.url) {
         setImageDataUri(data.url)
+        setTraits(data.traits ?? null)
         setStage('preview')
       } else {
         setGenerateError(data.error ?? 'Falha ao gerar imagem.')
@@ -123,6 +162,7 @@ export function MintSection() {
   const handleCancel = () => {
     setStage('idle')
     setImageDataUri(null)
+    setTraits(null)
     setGenerateError(null)
     resetTx()
   }
@@ -202,6 +242,7 @@ export function MintSection() {
                 </p>
                 <p className="text-[#39ff14]/50 text-xs tracking-widest mt-2">WELCOME TO THE DEFIVERSO</p>
               </div>
+              {traits && <TraitsPanel traits={traits} />}
             </div>
 
           /* GENERATING */
@@ -225,6 +266,7 @@ export function MintSection() {
                   <img src={imageDataUri} alt="Prévia do NFT" className="w-full h-full object-cover" />
                 </div>
               )}
+              {traits && <TraitsPanel traits={traits} />}
               <p className="text-[#39ff14]/50 text-xs tracking-[0.3em] text-center">
                 SEU ALIEN ESTÁ PRONTO — CONFIRMAR MINT?
               </p>
