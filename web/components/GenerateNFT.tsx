@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 
 export function GenerateNFT() {
-  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState<string | null>(null)  // url or data URI
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -14,7 +13,9 @@ export function GenerateNFT() {
     try {
       const res = await fetch('/api/generate', { method: 'POST' })
       const data = await res.json()
-      if (data.url) {
+      if (data.b64) {
+        setImageUrl(`data:image/png;base64,${data.b64}`)
+      } else if (data.url) {
         setImageUrl(data.url)
       } else {
         setError(data.error ?? 'Falha ao gerar imagem.')
@@ -51,15 +52,10 @@ export function GenerateNFT() {
 
           {/* Image preview */}
           {imageUrl && (
-            <div className="w-full aspect-square relative border border-[#39ff14]/20 overflow-hidden"
+            <div className="w-full aspect-square border border-[#39ff14]/20 overflow-hidden"
               style={{ boxShadow: '0 0 30px rgba(57,255,20,0.15)' }}>
-              <Image
-                src={imageUrl}
-                alt="NFT gerado"
-                fill
-                className="object-cover"
-                unoptimized
-              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={imageUrl} alt="NFT gerado" className="w-full h-full object-cover" />
             </div>
           )}
 
