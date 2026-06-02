@@ -15,6 +15,7 @@ tab_width = 4
 bracket_spacing = true
 
 [rpc_endpoints]
+chiado = "${RPC_URL}"
 # mainnet = "${MAINNET_RPC_URL}"
 # sepolia = "${SEPOLIA_RPC_URL}"
 

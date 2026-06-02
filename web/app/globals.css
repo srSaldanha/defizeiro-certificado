@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 4px #39ff14); opacity: 1; }
+  50%       { filter: drop-shadow(0 0 12px #39ff14) drop-shadow(0 0 24px #39ff14); opacity: 0.8; }
+}
+
+@keyframes flicker {
+  0%, 92%, 94%, 96%, 100% { opacity: 1; }
+  93%, 95%                 { opacity: 0.75; }
+}
