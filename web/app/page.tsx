@@ -1,4 +1,5 @@
 import { MintSection } from "@/components/MintSection"
+import { GenerateNFT } from "@/components/GenerateNFT"
 
 function AlienSymbol() {
   return (
@@ -69,6 +70,14 @@ export default function Home() {
         <p className="text-[#39ff14]/40 tracking-[0.5em] text-xs mb-12">
           DEFIDEV · GNOSIS CHIADO
         </p>
+
+        <GenerateNFT />
+
+        <div className="w-full max-w-md mx-auto my-8 flex items-center gap-4">
+          <div className="flex-1 h-px bg-[#39ff14]/10" />
+          <span className="text-[#39ff14]/30 text-xs tracking-[0.4em]">MINT</span>
+          <div className="flex-1 h-px bg-[#39ff14]/10" />
+        </div>
 
         <MintSection />
 
