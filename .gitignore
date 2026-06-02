@@ -1,0 +1,17 @@
+# env
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# contracts (Foundry)
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# web (Next.js)
+web/.next/
+web/node_modules/
+web/out/
